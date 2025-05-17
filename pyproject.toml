@@ -1,0 +1,15 @@
+[project]
+name = "color_detection"
+description = "This plugin adds functionality to ComfyUI for detecting yellow tones in images, making it particularly useful for skin tone analysis and image color evaluation."
+version = "1.0.0"
+license = {file = "LICENSE"}
+dependencies = ["opencv-python>=4.5.0", "numpy>=1.20.0", "pillow>=8.0.0"]
+
+[project.urls]
+Repository = "https://github.com/purewater2011/comfyui_color_detection"
+#  Used by Comfy Registry https://comfyregistry.org
+
+[tool.comfy]
+PublisherId = ""
+DisplayName = "comfyui_color_detection"
+Icon = ""
