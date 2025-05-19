@@ -39,12 +39,12 @@ class IsYellowishNode:
             # 1. 验证输入张量
             if image is None:
                 print("错误：输入图像为None")
-                return (False, 0.0, 0.0, "错误：输入图像为None")
+                return (False, 0.1, 0.1, "错误：输入图像为None")
 
             print(f"输入图像张量形状: {image.shape}, 类型: {image.dtype}")
             if image.numel() == 0:
                 print("错误：输入图像张量为空（没有元素）")
-                return (False, 0.0, 0.0, "错误：输入图像张量为空")
+                return (False, 0.1, 0.1, "错误：输入图像张量为空")
             # 转换ComfyUI的tensor图像为OpenCV格式
             # ComfyUI中图像是RGB格式的tensor，范围0-1
             i = 255. * image.cpu().numpy().squeeze()
@@ -82,7 +82,7 @@ class IsYellowishNode:
             import traceback
             traceback_str = traceback.format_exc()
             print(f"处理图像时发生错误:\n{traceback_str}")
-            return (False, 0.0, 0.0, f"错误: {str(e)}")
+            return (False, 0.1, 0.1, f"错误: {str(e)}")
 
 # 创建可视化节点 - 生成黄色热力图
 class YellowHeatmapNode:
