@@ -36,6 +36,15 @@ class IsYellowishNode:
     # 检测黄色的主要函数
     def detect_yellow(self, image, threshold):
         try:
+            # 1. 验证输入张量
+            if image is None:
+                print("错误：输入图像为None")
+                return (False, 0.0, 0.0, "错误：输入图像为None")
+
+            print(f"输入图像张量形状: {image.shape}, 类型: {image.dtype}")
+            if image.numel() == 0:
+                print("错误：输入图像张量为空（没有元素）")
+                return (False, 0.0, 0.0, "错误：输入图像张量为空")
             # 转换ComfyUI的tensor图像为OpenCV格式
             # ComfyUI中图像是RGB格式的tensor，范围0-1
             i = 255. * image.cpu().numpy().squeeze()
