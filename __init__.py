@@ -35,39 +35,45 @@ class IsYellowishNode:
 
     # 检测黄色的主要函数
     def detect_yellow(self, image, threshold):
-        # 转换ComfyUI的tensor图像为OpenCV格式
-        # ComfyUI中图像是RGB格式的tensor，范围0-1
-        i = 255. * image.cpu().numpy().squeeze()
-        img = np.clip(i, 0, 255).astype(np.uint8)
+        try:
+            # 转换ComfyUI的tensor图像为OpenCV格式
+            # ComfyUI中图像是RGB格式的tensor，范围0-1
+            i = 255. * image.cpu().numpy().squeeze()
+            img = np.clip(i, 0, 255).astype(np.uint8)
 
-        # 如果是RGBA，转换为RGB
-        if len(img.shape) == 3 and img.shape[2] == 4:
-            img = img[:, :, :3]
+            # 如果是RGBA，转换为RGB
+            if len(img.shape) == 3 and img.shape[2] == 4:
+                img = img[:, :, :3]
 
-        # RGB转BGR (OpenCV使用BGR)
-        img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            # RGB转BGR (OpenCV使用BGR)
+            img_bgr = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-        # 转换到LAB色彩空间
-        lab_img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
+            # 转换到LAB色彩空间
+            lab_img = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB)
 
-        # 提取b通道（黄-蓝轴）
-        b_channel = lab_img[:, :, 2]
+            # 提取b通道（黄-蓝轴）
+            b_channel = lab_img[:, :, 2]
 
-        # 计算b通道平均值
-        b_mean = float(np.mean(b_channel))
+            # 计算b通道平均值
+            b_mean = float(np.mean(b_channel))
 
-        # 计算大于阈值的像素占比
-        yellow_pixels = np.sum(b_channel > threshold)
-        total_pixels = img.shape[0] * img.shape[1]
-        yellow_percentage = float(yellow_pixels / total_pixels)
+            # 计算大于阈值的像素占比
+            yellow_pixels = np.sum(b_channel > threshold)
+            total_pixels = img.shape[0] * img.shape[1]
+            yellow_percentage = float(yellow_pixels / total_pixels)
 
-        # 如果b通道平均值大于阈值，判定为偏黄
-        is_yellow = b_mean > threshold
+            # 如果b通道平均值大于阈值，判定为偏黄
+            is_yellow = b_mean > threshold
 
-        # 创建结果文本
-        result_text = f"黄色分析结果:\n是否偏黄: {'是' if is_yellow else '否'}\n黄色区域占比: {yellow_percentage*100:.2f}%\nLAB b通道均值: {b_mean:.2f}"
+            # 创建结果文本
+            result_text = f"黄色分析结果:\n是否偏黄: {'是' if is_yellow else '否'}\n黄色区域占比: {yellow_percentage*100:.2f}%\nLAB b通道均值: {b_mean:.2f}"
 
-        return (is_yellow, yellow_percentage, b_mean, result_text)
+            return (is_yellow, yellow_percentage, b_mean, result_text)
+        except Exception as e:
+            import traceback
+            traceback_str = traceback.format_exc()
+            print(f"处理图像时发生错误:\n{traceback_str}")
+            return (False, 0.0, 0.0, f"错误: {str(e)}")
 
 # 创建可视化节点 - 生成黄色热力图
 class YellowHeatmapNode:
